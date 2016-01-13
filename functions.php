@@ -56,6 +56,9 @@ function exec_curl_request($handle) {
   return $response;
 }
 
+/*
+  Send API request via URL query string.
+*/
 function apiRequest($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
@@ -85,6 +88,9 @@ function apiRequest($method, $parameters) {
   return exec_curl_request($handle);
 }
 
+/*
+  Send API request via json format.
+*/
 function apiRequestJson($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
