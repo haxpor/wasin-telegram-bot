@@ -20,6 +20,9 @@ function apiRequestWebhook($method, $parameters) {
   return true;
 }
 
+/*
+  Execute request via curl.
+*/
 function exec_curl_request($handle) {
   $response = curl_exec($handle);
 
