@@ -3,7 +3,7 @@ WasinBot, a simple bot on Telegram
 
 # How to
 1. First you need to create a new telegram bot on Telegram
-2. Set both token, and your webhool url in config.php
+2. Set both token, and your webhook url in config.php
 3. You're done.
 
 # Set webhook
