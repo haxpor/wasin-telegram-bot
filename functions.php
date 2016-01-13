@@ -1,5 +1,8 @@
 <?php
 
+/*
+  Request webhook api.
+*/
 function apiRequestWebhook($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
