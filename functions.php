@@ -116,6 +116,9 @@ function apiRequestJson($method, $parameters) {
   return exec_curl_request($handle);
 }
 
+/*
+  Process message.
+*/
 function processMessage($message) {
   // process incoming message
   $message_id = $message['message_id'];
