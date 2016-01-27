@@ -158,6 +158,13 @@ function processMessage($message) {
                                 "text" => "Good bye for now. Come back whenever you want. I'm always here :)");
             apiRequestJson("sendMessage", $parameters);
         }
+        // getname
+        else if (strpos($text, "/getname") === 0)
+        {
+            $parameters = array("chat_id" => $chat_id,
+                                "text"  =>  "Wasin Thonkaew");
+            apiRequestJson("sendMessage", $parameters);
+        }
         else if ($text === "Hello" || $text === "Hi")
         {
             apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
