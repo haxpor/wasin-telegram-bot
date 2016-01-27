@@ -211,6 +211,14 @@ function processMessage($message) {
 								"text"	=>	"28 USD / Hour");
 			apiRequestJson("sendMessage", $parameters);
 		}
+		// getcurrentlocation
+		else if (strpos($text, "/getcurrentlocation") === 0)
+		{
+			$parameters = array("chat_id" => $chat_id,
+								"latitude" => 18.786497,
+								"longitude" => 98.991522);
+			apiRequestJson("sendLocation", $parameters);
+		}
     }
     else
     {
