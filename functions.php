@@ -219,6 +219,15 @@ function processMessage($message) {
 								"longitude" => 98.991522);
 			apiRequestJson("sendLocation", $parameters);
 		}
+		// getproductsmade
+		else if (strpos($text, "/getproductsmade") === 0)
+		{
+			$parameters = array("chat_id" => $chat_id,
+								"text" => "Zombie Hero : Revenge of Kiki\n - Website: [http://zombie-hero.com](http://zombie-hero.com)\n - App Store: [Download](https://itunes.apple.com/app/zombie-hero-revenge-of-kiki/id904184868?mt=8)\n\nIndiedevBkk - [Website](http://indiedevbkk.tk)",
+								"parse_mode" => "Markdown",
+								"disable_web_page_preview" => true);
+			apiRequestJson("sendMessage", $parameters);
+		}
     }
     else
     {
