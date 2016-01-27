@@ -133,11 +133,11 @@ function processMessage($message) {
     // incoming text message
     $text = $message['text'];
 
+    // start
     if (strpos($text, "/start") === 0) {
-      apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" => 'Hello', 'reply_markup' => array(
-        'keyboard' => array(array('Hello', 'Hi')),
-        'one_time_keyboard' => true,
-        'resize_keyboard' => true)));
+        $parameters = array("chat_id" => $chat_id,
+                            "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.");
+        apiRequestJson("sendMessage", $parameters);
     } else if ($text === "Hello" || $text === "Hi") {
       apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
     } else if (strpos($text, "/stop") === 0) {
