@@ -135,9 +135,13 @@ function processMessage($message) {
 
     // start
     if (strpos($text, "/start") === 0) {
+        // get the latest help text from gist
+        $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/b9e69b8a41ad7560babb2c46c77424f840f3a6fd/wasinbot-commands.txt');
+
         $parameters = array("chat_id" => $chat_id,
-                            "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.");
+                            "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\nAvailable commands are as follows.\n\n" . $helpText);
         apiRequestJson("sendMessage", $parameters);
+    // stop
     } else if ($text === "Hello" || $text === "Hi") {
       apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
     } else if (strpos($text, "/stop") === 0) {
