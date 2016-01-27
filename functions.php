@@ -204,13 +204,13 @@ function processMessage($message) {
 								"disable_web_page_preview" => true);
 			apiRequestJson("sendMessage", $parameters);
 		}
-        else if (strpos($text, "/stop") === 0)
-        {
-        }
-        else
-        {
-            apiRequestWebhook("sendMessage", array('chat_id' => $chat_id, "reply_to_message_id" => $message_id, "text" => 'Cool'));
-        }
+		// getfreelancingrate
+		else if (strpos($text, "/getfreelancingrate") === 0)
+		{
+			$parameters = array("chat_id" => $chat_id,
+								"text"	=>	"28 USD / Hour");
+			apiRequestJson("sendMessage", $parameters);
+		}
     }
     else
     {
