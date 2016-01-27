@@ -195,6 +195,15 @@ function processMessage($message) {
 								"text"	=>	"Best");
 			apiRequestJson("sendMessage", $parameters);
         }
+		// getsocial
+		else if (strpos($text, "/getsocial") === 0)
+		{
+			$parameters = array("chat_id" => $chat_id,
+								"text" => "Twitter: [@haxpor](https://twitter.com/haxpor)\nFacebook: [Wasin Thonkaew](https://www.facebook.com/wasin.thonkaew)\nInstagram: [haxpor](https://www.instagram.com/haxpor/)\nWebsite: [https://wasin.io](https://wasin.io)",
+								"parse_mode" => "Markdown",
+								"disable_web_page_preview" => true);
+			apiRequestJson("sendMessage", $parameters);
+		}
         else if (strpos($text, "/stop") === 0)
         {
         }
