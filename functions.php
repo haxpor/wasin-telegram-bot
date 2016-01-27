@@ -165,9 +165,12 @@ function processMessage($message) {
                                 "text"  =>  "Wasin Thonkaew");
             apiRequestJson("sendMessage", $parameters);
         }
-        else if ($text === "Hello" || $text === "Hi")
-        {
-            apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
+		// getnickname
+        else if (strpos($text, "/getnickname") === 0)
+		{
+			$parameters = array("chat_id" => $chat_id,
+								"text"	=>	"Best");
+			apiRequestJson("sendMessage", $parameters);
         }
         else if (strpos($text, "/stop") === 0)
         {
