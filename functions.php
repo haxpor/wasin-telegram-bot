@@ -126,32 +126,47 @@ function apiRequestJson($method, $parameters) {
   Process message.
 */
 function processMessage($message) {
-  // process incoming message
-  $message_id = $message['message_id'];
-  $chat_id = $message['chat']['id'];
-  if (isset($message['text'])) {
-    // incoming text message
-    $text = $message['text'];
+    // process incoming message
+    $message_id = $message['message_id'];
+    $chat_id = $message['chat']['id'];
+    if (isset($message['text']))
+    {
+        // incoming text message
+        $text = $message['text'];
 
-    // start
-    if (strpos($text, "/start") === 0) {
-        // get the latest help text from gist
-        $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/b9e69b8a41ad7560babb2c46c77424f840f3a6fd/wasinbot-commands.txt');
+        // start
+        if (strpos($text, "/start") === 0) 
+        {
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\n/help for list of available commands.");
+            apiRequestJson("sendMessage", $parameters);
+        } 
+        // help
+        else if (strpos($text, "/help") === 0)
+        {
+            // get the latest help text from gist
+            $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/191f91fc34fcb974e2186a514308b94a7a15a975/wasinbot-commands.txt');
 
-        $parameters = array("chat_id" => $chat_id,
-                            "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\nAvailable commands are as follows.\n\n" . $helpText);
-        apiRequestJson("sendMessage", $parameters);
-    // stop
-    } else if ($text === "Hello" || $text === "Hi") {
-      apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
-    } else if (strpos($text, "/stop") === 0) {
-      // stop now
-    } else {
-      apiRequestWebhook("sendMessage", array('chat_id' => $chat_id, "reply_to_message_id" => $message_id, "text" => 'Cool'));
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => $helpText);
+            apiRequestJson("sendMessage", $parameters);
+        }
+        else if ($text === "Hello" || $text === "Hi")
+        {
+            apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'Nice to meet you'));
+        }
+        else if (strpos($text, "/stop") === 0)
+        {
+        }
+        else
+        {
+            apiRequestWebhook("sendMessage", array('chat_id' => $chat_id, "reply_to_message_id" => $message_id, "text" => 'Cool'));
+        }
     }
-  } else {
-    apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'I understand only text messages'));
-  }
+    else
+    {
+        apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'I understand only text messages'));
+    }
 }
 
 ?>
