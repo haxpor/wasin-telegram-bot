@@ -168,7 +168,7 @@ function processMessage($message) {
         else if (strpos($text, "/help") === 0)
         {
             // get the latest help text from gist
-            $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/191f91fc34fcb974e2186a514308b94a7a15a975/wasinbot-commands.txt');
+            $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/4529125b6a5c587dd29fae689dc8d36cd33453da/wasinbot-commands.txt');
 
             $parameters = array("chat_id" => $chat_id,
                                 "text" => $helpText);
