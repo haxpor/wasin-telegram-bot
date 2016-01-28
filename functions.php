@@ -140,9 +140,33 @@ function apiRequestJson($method, $parameters)
   	curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   	curl_setopt($handle, CURLOPT_TIMEOUT, 60);
   	curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($parameters));
-  	curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+	curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 
   	return exec_curl_request($handle);
+}
+
+/*
+	Send photo via url format.
+*/
+function apiRequestSendPhoto($chat_id, $parameters)
+{
+	if (!$parameters)
+	{
+		$parameters = array();
+	}
+	else if (!is_array($parameters))
+	{
+		error_log("Parameters must be an array\n");
+		return false;
+	}
+
+	$handle = curl_init();
+	curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: multipart/form-data"));
+	curl_setopt($handle, CURLOPT_URL, API_URL."sendPhoto?chat_id=" . $chat_id);
+	curl_setopt($handle, CURLOPT_POSTFIELDS, $parameters);
+	curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+	
+	return exec_curl_request($handle);
 }
 
 /*
@@ -227,6 +251,25 @@ function processMessage($message) {
 								"parse_mode" => "Markdown",
 								"disable_web_page_preview" => true);
 			apiRequestJson("sendMessage", $parameters);
+		}
+		// getlistofclients
+		else if (strpos($text, "/getlistofclients") === 0)
+		{
+			// aerothai
+			{
+				$parameters = array("chat_id" => $chat_id,
+								"photo" => new CURLFile(realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png")),
+								"caption" => "Aeronautical Radio of Thailand LTD");
+				apiRequestSendPhoto($chat_id, $parameters);
+			}
+
+			// playbasis
+			{
+				$parameters = array("chat_id" => $chat_id,
+                                "photo" => new CURLFile(realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png")),
+                                "caption" => "Playbasis");
+                apiRequestSendPhoto($chat_id, $parameters);
+			}
 		}
     }
     else
