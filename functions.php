@@ -185,7 +185,7 @@ function processMessage($message) {
         if (strpos($text, "/start") === 0) 
         {
             $parameters = array("chat_id" => $chat_id,
-                                "text" => "Get to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\n/help for list of available commands.");
+                                "text" => "Greeting to you!.\n\nGet to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\n/help for list of available commands.");
             apiRequestJson("sendMessage", $parameters);
         } 
         // help
