@@ -252,6 +252,8 @@ function processMessage($message) {
 		// getcurrentlocation
 		else if (strpos($text, "/getcurrentlocation") === 0)
 		{
+            sendFindingLocationAction($chat_id);
+
 			$parameters = array("chat_id" => $chat_id,
 								"latitude" => 18.786497,
 								"longitude" => 98.991522);
@@ -343,6 +345,17 @@ function sendTypingAction($chat_id)
 {
     $parameters = array("chat_id" => $chat_id,
                         "action" => "typing");
+    apiRequestJson("sendChatAction", $parameters);
+}
+
+/*
+    Send find_location action to user.
+    $chat_id - chat id to send action to
+*/
+function sendFindingLocationAction($chat_id)
+{
+    $parameters = array("chat_id" => $chat_id,
+                        "action" => "find_location");
     apiRequestJson("sendChatAction", $parameters);
 }
 
