@@ -184,6 +184,8 @@ function processMessage($message) {
         // start
         if (strpos($text, "/start") === 0) 
         {
+            sendTypingAction($chat_id);
+
             $parameters = array("chat_id" => $chat_id,
                                 "text" => "Greeting to you!.\n\nGet to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\n/help for list of available commands.");
             apiRequestJson("sendMessage", $parameters);
@@ -191,6 +193,8 @@ function processMessage($message) {
         // help
         else if (strpos($text, "/help") === 0)
         {
+            sendTypingAction($chat_id);
+
             // get the latest help text from gist
             $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/4529125b6a5c587dd29fae689dc8d36cd33453da/wasinbot-commands.txt');
 
@@ -201,6 +205,8 @@ function processMessage($message) {
         // stop
         else if (strpos($text, "/stop") === 0)
         {
+            sendTypingAction($chat_id);
+
             $parameters = array("chat_id" => $chat_id,
                                 "text" => "Good bye for now. Come back whenever you want. I'm always here :)");
             apiRequestJson("sendMessage", $parameters);
@@ -208,6 +214,8 @@ function processMessage($message) {
         // getname
         else if (strpos($text, "/getname") === 0)
         {
+            sendTypingAction($chat_id);
+
             $parameters = array("chat_id" => $chat_id,
                                 "text"  =>  "Wasin Thonkaew");
             apiRequestJson("sendMessage", $parameters);
@@ -215,6 +223,8 @@ function processMessage($message) {
 		// getnickname
         else if (strpos($text, "/getnickname") === 0)
 		{
+            sendTypingAction($chat_id);
+
 			$parameters = array("chat_id" => $chat_id,
 								"text"	=>	"Best");
 			apiRequestJson("sendMessage", $parameters);
@@ -222,6 +232,8 @@ function processMessage($message) {
 		// getsocial
 		else if (strpos($text, "/getsocial") === 0)
 		{
+            sendTypingAction($chat_id);
+
 			$parameters = array("chat_id" => $chat_id,
 								"text" => "Twitter: [@haxpor](https://twitter.com/haxpor)\nFacebook: [Wasin Thonkaew](https://www.facebook.com/wasin.thonkaew)\nInstagram: [haxpor](https://www.instagram.com/haxpor/)\nWebsite: [https://wasin.io](https://wasin.io)",
 								"parse_mode" => "Markdown",
@@ -231,6 +243,8 @@ function processMessage($message) {
 		// getfreelancingrate
 		else if (strpos($text, "/getfreelancingrate") === 0)
 		{
+            sendTypingAction($chat_id);
+
 			$parameters = array("chat_id" => $chat_id,
 								"text"	=>	"28 USD / Hour");
 			apiRequestJson("sendMessage", $parameters);
@@ -246,6 +260,8 @@ function processMessage($message) {
 		// getproductsmade
 		else if (strpos($text, "/getproductsmade") === 0)
 		{
+            sendTypingAction($chat_id);
+            
 			$parameters = array("chat_id" => $chat_id,
 								"text" => "Zombie Hero : Revenge of Kiki\n - Website: [http://zombie-hero.com](http://zombie-hero.com)\n - App Store: [Download](https://itunes.apple.com/app/zombie-hero-revenge-of-kiki/id904184868?mt=8)\n\nIndiedevBkk - [Website](http://indiedevbkk.tk)",
 								"parse_mode" => "Markdown",
@@ -316,6 +332,17 @@ function sendUploadPhotoAction($chat_id)
 {
     $parameters = array("chat_id" => $chat_id,
                         "action" => "upload_photo");
+    apiRequestJson("sendChatAction", $parameters);
+}
+
+/*
+    Send typing action to user.
+    $chat_id - chat id to send action to
+*/
+function sendTypingAction($chat_id)
+{
+    $parameters = array("chat_id" => $chat_id,
+                        "action" => "typing");
     apiRequestJson("sendChatAction", $parameters);
 }
 
