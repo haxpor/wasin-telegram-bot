@@ -257,18 +257,56 @@ function processMessage($message) {
 		{
 			// aerothai
 			{
-				$parameters = array("chat_id" => $chat_id,
-								"photo" => new CURLFile(realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png")),
+                // send upload photo action
+                {
+                    $parameters = array("chat_id" => $chat_id,
+                                    "action" => "upload_photo");
+                    apiRequestJson("sendChatAction", $parameters);
+                }
+
+                {
+                    // get the realpath of image file to serve to user
+                    if (PRODUCTION)
+                    {
+                        $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png");
+                    }
+                    else
+                    {
+                        $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/aerothai-logo.png");
+                    }
+
+				    $parameters = array("chat_id" => $chat_id,
+								"photo" => new CURLFile($realpath),
 								"caption" => "Aeronautical Radio of Thailand LTD");
-				apiRequestSendPhoto($chat_id, $parameters);
+				    apiRequestSendPhoto($chat_id, $parameters);
+                }
 			}
 
 			// playbasis
 			{
-				$parameters = array("chat_id" => $chat_id,
-                                "photo" => new CURLFile(realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png")),
+                // send upload photo action
+                {
+                    $parameters = array("chat_id" => $chat_id,
+                                    "action" => "upload_photo");
+                    apiRequestJson("sendChatAction", $parameters);
+                }
+
+                {
+                    // get the realpath of image file to serve to user
+                    if (PRODUCTION)
+                    {
+                        $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png");
+                    }
+                    else
+                    {
+                        $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/playbasis-logo.png");
+                    }
+
+				    $parameters = array("chat_id" => $chat_id,
+                                "photo" => new CURLFile($realpath),
                                 "caption" => "Playbasis");
-                apiRequestSendPhoto($chat_id, $parameters);
+                    apiRequestSendPhoto($chat_id, $parameters);
+                }
 			}
 		}
     }
