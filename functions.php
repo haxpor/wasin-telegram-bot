@@ -258,11 +258,7 @@ function processMessage($message) {
 			// aerothai
 			{
                 // send upload photo action
-                {
-                    $parameters = array("chat_id" => $chat_id,
-                                    "action" => "upload_photo");
-                    apiRequestJson("sendChatAction", $parameters);
-                }
+                sendUploadPhotoAction($chat_id);
 
                 {
                     // get the realpath of image file to serve to user
@@ -285,11 +281,7 @@ function processMessage($message) {
 			// playbasis
 			{
                 // send upload photo action
-                {
-                    $parameters = array("chat_id" => $chat_id,
-                                    "action" => "upload_photo");
-                    apiRequestJson("sendChatAction", $parameters);
-                }
+                sendUploadPhotoAction($chat_id);
 
                 {
                     // get the realpath of image file to serve to user
@@ -314,6 +306,17 @@ function processMessage($message) {
     {
         apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => 'I understand only text messages'));
     }
+}
+
+/*
+    Send upload_photo action to user.
+    $chat_id - chat id to send action to
+*/
+function sendUploadPhotoAction($chat_id)
+{
+    $parameters = array("chat_id" => $chat_id,
+                        "action" => "upload_photo");
+    apiRequestJson("sendChatAction", $parameters);
 }
 
 ?>
