@@ -12,7 +12,7 @@ if (php_sapi_name() == 'cli') {
 	}
 	else
 	{
-		define('WEBHOOK_URL', 'https://325d46ae.ngrok.io/~haxpor/wasin-telegram-bot/api.php');
+		define('WEBHOOK_URL', 'https://c71b79e5.ngrok.io/~haxpor/wasin-telegram-bot/api.php');
 	}
 
 	// if run from console, set or delete webhook
