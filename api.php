@@ -2,7 +2,8 @@
 
 include('functions.php');
 include('mongodbHelper.php');
-$configs = include 'config.php';
+include('config.php');
+include('configapikey.php');
 
 $content = file_get_contents("php://input");
 $update = json_decode($content, true);

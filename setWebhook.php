@@ -4,15 +4,16 @@
 if (php_sapi_name() == 'cli') {
 	
 	include('functions.php');
-	$configs = include 'config.php';
+	include('config.php');
+	include('configapikey.php');
 
 	if (PRODUCTION)
 	{
-		define('WEBHOOK_URL', 'https://wasin.io/projs/wasin-telegram-bot/api.php');
+		define('WEBHOOK_URL', 'https://your/production/webhook/url.php');
 	}
 	else
 	{
-		define('WEBHOOK_URL', 'https://c71b79e5.ngrok.io/~haxpor/wasin-telegram-bot/api.php');
+		define('WEBHOOK_URL', 'https://your/development/webhook/url.php');
 	}
 
 	// if run from console, set or delete webhook
