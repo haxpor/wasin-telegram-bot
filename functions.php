@@ -198,6 +198,28 @@ function processMessage($message, $mongodb) {
         // incoming text message
         $text = $message['text'];
 
+        // stop will not up to the current state
+        if (strpos($text, "/startover") === 0)
+        {
+            sendTypingAction($chat_id);
+
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "Good bye for now. Come back whenever you want. I'm always here :)");
+            apiRequestJson("sendMessage", $parameters);
+
+            // start it over
+            $state_id = State::Normal;
+            $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+            $text = "/start";
+        }
+        // need to have this in case of restart the bot after deleting
+        else if (strpos($text, "/start") === 0)
+        {
+            // start it over
+            $state_id = State::Normal;
+            $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+        }
+
         if ($state_id == State::Normal)
         {
             // start
@@ -216,25 +238,30 @@ function processMessage($message, $mongodb) {
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
             } 
-            // help
-            else if (strpos($text, "/help") === 0)
-            {
-                sendTypingAction($chat_id);
-
-                // get the latest help text from gist
-                $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/4529125b6a5c587dd29fae689dc8d36cd33453da/wasinbot-commands.txt');
-
-                $parameters = array("chat_id" => $chat_id,
-                                    "text" => $helpText);
-                apiRequestJson("sendMessage", $parameters);
-            }
             // stop
             else if (strpos($text, "/stop") === 0)
             {
                 sendTypingAction($chat_id);
 
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "Good bye for now. Come back whenever you want. I'm always here :)");
+                                    "text" => "Thanks for chatting with me ✌️😀✌️");
+                apiRequestJson("sendMessage", $parameters);
+
+                // start it over
+                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+                $text = "/start";
+            }
+            // help
+            else if (strpos($text, "/help") === 0)
+            {
+                sendTypingAction($chat_id);
+
+                // get the latest help text from gist
+                $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/bb38da16bf264f30113695887407639832596ca4/wasinbot-commands.txt');
+
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => $helpText);
                 apiRequestJson("sendMessage", $parameters);
             }
             // getname
@@ -352,8 +379,11 @@ function processMessage($message, $mongodb) {
             {
                 sendTypingAction($chat_id);
 
+                $replyMarkup = array("keyboard" => array(array("👍")));
+
                 $parameters = array("chat_id" => $chat_id,
-                                    "text"  =>  "You wanna talk business huh?");
+                                    "text"  =>  "You wanna talk business huh?",
+                                    "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
             }
             else if (strpos($text, "Personal 😀") == 0)
@@ -367,6 +397,13 @@ function processMessage($message, $mongodb) {
 
             // send use back to business state 1
             $mongodb->updateDocToStateCollection($chat_id, State::Business_State_1);
+        }
+        else if ($state_id == State::Business_State_1)
+        {
+            if (strpos($text, "👍") === 0)
+            {
+                // TODO: Continue working on this part...
+            }
         }
     }
     else
