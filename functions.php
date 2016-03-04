@@ -225,16 +225,26 @@ function processMessage($message, $mongodb) {
             // start
             if (strpos($text, "/start") === 0) 
             {
-                sendTypingAction($chat_id);
-
                 // change state
                 $mongodb->updateDocToStateCollection($chat_id, State::Start_Answer);
 
-                // create reply markup
-                $replyMarkup = array("keyboard" => array(array("Business 💵"), array("Personal 😀")));
-
+                // msg chunk 1
+                sendTypingAction($chat_id);
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "Greeting to you!.\n\nGet to know Wasin Thonkaew about his basic contact information, freelancing rate, and discuss about business with him 24/7.\n\n/help for list of available commands.",
+                                    "text" => "Greeting to you!");
+                apiRequestJson("sendMessage", $parameters);
+
+                // msg chunk 2
+                sendTypingAction($chat_id);
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "I will help you get down to do business with Wasin, or even be friend with him 24/7.");
+                apiRequestJson("sendMessage", $parameters);
+
+                // msg chunk 3
+                sendTypingAction($chat_id);
+                $replyMarkup = array("keyboard" => array(array("Business 💵"), array("Personal 😀")));
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "What can I help you?",
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
             } 
@@ -379,31 +389,41 @@ function processMessage($message, $mongodb) {
             {
                 sendTypingAction($chat_id);
 
+                // create reply markup
                 $replyMarkup = array("keyboard" => array(array("👍")));
 
                 $parameters = array("chat_id" => $chat_id,
                                     "text"  =>  "You wanna talk business huh?",
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
+
+                // send use back to business state 1
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_1);
             }
-            else if (strpos($text, "Personal 😀") == 0)
+            else if (strpos($text, "Personal 😀") === 0)
             {
                 sendTypingAction($chat_id);
 
-                $parameters = array("chat_id" => $chat_id,
-                                    "text"  =>  "You wanna talk personal huh?");
-                apiRequestJson("sendMessage", $parameters);
-            }
+                // create reply markup
+                $replyMarkup = array("keyboard" => array(array("Absolutely! 😉"), array("Nahh, maybe... I just want to know you more 😬")));
 
-            // send use back to business state 1
-            $mongodb->updateDocToStateCollection($chat_id, State::Business_State_1);
-        }
-        else if ($state_id == State::Business_State_1)
-        {
-            if (strpos($text, "👍") === 0)
-            {
-                // TODO: Continue working on this part...
+                $parameters = array("chat_id" => $chat_id,
+                                    "text"  =>  "Wanna feel comfortable with me first before getting down to biz 😁?",
+                                    "reply_markup" => $replyMarkup);
+                apiRequestJson("sendMessage", $parameters);
+
+                // send use back to business state 1
+                $mongodb->updateDocToStateCollection($chat_id, State::Personal_1);
             }
+            // TODO: Add safety handler here, but it SHOULDN'T happen...
+        }
+        else if ($state_id == State::Business_1)
+        {
+
+        }
+        else if ($state_id == State::Personal_1)
+        {
+
         }
     }
     else
