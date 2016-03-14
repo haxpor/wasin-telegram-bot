@@ -397,7 +397,7 @@ function processMessage($message, $mongodb) {
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
 
-                // send use back to business state 1
+                // send user back to business state 1
                 $mongodb->updateDocToStateCollection($chat_id, State::Business_1);
             }
             else if (strpos($text, "Personal 😀") === 0)
@@ -412,14 +412,39 @@ function processMessage($message, $mongodb) {
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
 
-                // send use back to business state 1
+                // send user back to business state 1
                 $mongodb->updateDocToStateCollection($chat_id, State::Personal_1);
             }
             // TODO: Add safety handler here, but it SHOULDN'T happen...
         }
         else if ($state_id == State::Business_1)
         {
+            if (strpos($text, "👍") === 0)
+            {
+                sendTypingAction($chat_id);
 
+                // create reply markup
+                $replyMarkup = array("keyboard" => array(array("Business opportunity", "Freelance work")));
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "What's it about?",
+                                    "reply_markup" => $replyMarkup);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_2);
+            }
+        }
+        else if ($state_id == State::Business_2)
+        {
+            if (strpos($text, "Business opportunity") === 0)
+            {
+                
+            }
+            else if (strpos($text, "Freelance work") === 0)
+            {
+                
+            }
         }
         else if ($state_id == State::Personal_1)
         {
