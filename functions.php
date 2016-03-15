@@ -501,21 +501,47 @@ function processMessage($message, $mongodb) {
 
         else if ($state_id == State::Business_Opportunity_1)
         {
+            $isOk = false;
+
             if (strpos($text, "1. Tech startup") === 0)
             {
+                // save information for later submission
+                $mongodb->updateBusinessMsgWithTypeId($chat_id, 1);
 
+                $isOk = true;
             }
             else if (strpos($text, "2. Game development") === 0)
             {
+                // save information for later submission
+                $mongodb->updateBusinessMsgWithTypeId($chat_id, 2);
 
+                $isOk = true;
             }
             else if (strpos($text, "3. Blended of 1 and 2") === 0)
             {
+                // save information for later submission
+                $mongodb->updateBusinessMsgWithTypeId($chat_id, 3);
 
+                $isOk = true;
             }
             else if (strpos($text, "4. Others") === 0)
             {
+                // save information for later submission
+                $mongodb->updateBusinessMsgWithTypeId($chat_id, 4);
 
+                $isOk = true;
+            }
+
+            if ($isOk)
+            {
+                // proceed to next question
+                sendTypingAction($chat_id);
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "Tell me briefly about it");
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_2);
             }
             else
             {
