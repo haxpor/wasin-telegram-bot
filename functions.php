@@ -219,6 +219,27 @@ function processMessage($message, $mongodb) {
             $state_id = State::Normal;
             $mongodb->updateDocToStateCollection($chat_id, State::Normal);
         }
+        // jump start over to the first choice screen
+        else if (strpos($text, "/bypassstart") === 0)
+        {
+            // start it over
+            $state_id = State::Normal;
+            $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+        }
+        // stop
+        else if (strpos($text, "/stop") === 0)
+        {
+            sendTypingAction($chat_id);
+
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "Thanks for chatting with me ✌️😀✌️");
+            apiRequestJson("sendMessage", $parameters);
+
+            // start it over
+            $state_id = State::Normal;
+            $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+            $text = "/bypassstart";
+        }
 
         if ($state_id == State::Normal)
         {
@@ -248,18 +269,19 @@ function processMessage($message, $mongodb) {
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
             } 
-            // stop
-            else if (strpos($text, "/stop") === 0)
+            // bypass start (cut out greetings, and un-neccessary text)
+            else if (strpos($text, "/bypassstart") === 0)
             {
+                // change state
+                $mongodb->updateDocToStateCollection($chat_id, State::Start_Answer);
+
+                // send msg
                 sendTypingAction($chat_id);
-
+                $replyMarkup = array("keyboard" => array(array("Business 💵"), array("Personal 😀")));
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "Thanks for chatting with me ✌️😀✌️");
+                                    "text" => "What can I help you?",
+                                    "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
-
-                // start it over
-                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
-                $text = "/start";
             }
             // help
             else if (strpos($text, "/help") === 0)
@@ -267,7 +289,7 @@ function processMessage($message, $mongodb) {
                 sendTypingAction($chat_id);
 
                 // get the latest help text from gist
-                $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/bb38da16bf264f30113695887407639832596ca4/wasinbot-commands.txt');
+                $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/565d9dd73473fc020b0f7b97b705e198b8bebfa6/wasinbot-commands.txt');
 
 
                 $parameters = array("chat_id" => $chat_id,
