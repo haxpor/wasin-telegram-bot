@@ -241,6 +241,8 @@ function processMessage($message, $mongodb) {
             $text = "/bypassstart";
         }
 
+        PC:
+
         if ($state_id == State::Normal)
         {
             // start
@@ -437,7 +439,15 @@ function processMessage($message, $mongodb) {
                 // send user back to business state 1
                 $mongodb->updateDocToStateCollection($chat_id, State::Personal_1);
             }
-            // TODO: Add safety handler here, but it SHOULDN'T happen...
+            else
+            {
+                // repeat the question again
+                $state_id = State::Normal;
+                $text = "/bypassstart";
+                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+
+                goto PC;
+            }
         }
         else if ($state_id == State::Business_1)
         {
@@ -446,10 +456,10 @@ function processMessage($message, $mongodb) {
                 sendTypingAction($chat_id);
 
                 // create reply markup
-                $replyMarkup = array("keyboard" => array(array("Business opportunity", "Freelance work")));
+                $replyMarkup = array("keyboard" => array(array("Business opportunity"), array("Freelance work")));
 
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "What's it about?",
+                                    "text" => "Which one best describe your proposal?",
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
 
@@ -461,13 +471,63 @@ function processMessage($message, $mongodb) {
         {
             if (strpos($text, "Business opportunity") === 0)
             {
-                
+                sendTypingAction($chat_id);
+
+                // create a reply markup
+                $replyMarkup = array("keyboard" => array(array("1. Tech startup"), array("2. Game development"), array("3. Blended of 1 and 2"), array("4. Others")));
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "What is it about?",
+                                    "reply_markup" => $replyMarkup);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_1);
             }
             else if (strpos($text, "Freelance work") === 0)
             {
                 
             }
+            else
+            {
+                // repeat the question again
+                $state_id = State::Business_1;
+                $text = "👍";
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_1);
+
+                goto PC;
+            }
         }
+
+        else if ($state_id == State::Business_Opportunity_1)
+        {
+            if (strpos($text, "1. Tech startup") === 0)
+            {
+
+            }
+            else if (strpos($text, "2. Game development") === 0)
+            {
+
+            }
+            else if (strpos($text, "3. Blended of 1 and 2") === 0)
+            {
+
+            }
+            else if (strpos($text, "4. Others") === 0)
+            {
+
+            }
+            else
+            {
+                // repeat the question again
+                $state_id = State::Business_2;
+                $text = "Business opportunity";
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_2);
+
+                goto PC;
+            }
+        }
+
         else if ($state_id == State::Personal_1)
         {
 

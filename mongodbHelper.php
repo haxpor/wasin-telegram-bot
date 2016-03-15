@@ -5,12 +5,14 @@ class mongodbHelper {
 	private $mongo;
 	private $db;
 	private $stateCollection;
+	private $businessMsgCollection;
 
 	public function __construct()
 	{
 		$this->m = new MongoClient();
 		$this->db = $this->m->wasinbot;
 		$this->stateCollection = $this->db->state;
+		$this->businessMsgCollection = $this->db->businessMsg;
 	}
 
 	public function hasDocInStateCollection($chat_id)
