@@ -58,7 +58,7 @@ class mongodbHelper {
 	}
 
 	/**
-		Update business msg doc with type-id.
+		Update businessMsg doc with type-id.
 		Consult google doc for type-id.
 
 		It will update "type_id" field without remove other fields.
@@ -66,6 +66,28 @@ class mongodbHelper {
 	public function updateBusinessMsgWithTypeId($chat_id, $type_id)
 	{
 		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("type_id" => $type_id, "update_at" => new MongoDate())), array("upsert" => true));
+	}
+
+	/**
+		Update businessMsg doc with type-id.
+		Consult google doc for productDescriptionText.
+
+		It will update "productDescriptionText" field without remove other fields.
+	*/
+	public function updateBusinessMsgWithProductDescriptionText($chat_id, $prod_descriptionText)
+	{
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("productDescriptionText" => $prod_descriptionText, "update_at" => new MongoDate())), array("upsert" => true));
+	}
+
+	/**
+		Update businessMsg doc with offerText.
+		Consult google doc for offerText.
+
+		It will update "offerText" field without remove other fields.
+	*/
+	public function updateBusinessMsgWithOfferText($chat_id, $offerText)
+	{
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("offerText" => $offerText, "update_at" => new MongoDate())), array("upsert" => true));
 	}
 }
 

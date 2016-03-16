@@ -536,8 +536,10 @@ function processMessage($message, $mongodb) {
             {
                 // proceed to next question
                 sendTypingAction($chat_id);
+                $replyKeyboardHide = array("hide_keyboard" => true);
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "Tell me briefly about it");
+                                    "text" => "Tell me briefly about it",
+                                    "reply_markup" => $replyKeyboardHide);
                 apiRequestJson("sendMessage", $parameters);
 
                 // proceed to next state
@@ -552,6 +554,44 @@ function processMessage($message, $mongodb) {
 
                 goto PC;
             }
+        }
+        else if ($state_id == State::Business_Opportunity_2)
+        {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateBusinessMsgWithProductDescriptionText($chat_id, $text);
+
+            // proceed to next question
+            sendTypingAction($chat_id);
+            $replyKeyboardHide = array("hide_keyboard" => true);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "What's your offer?",
+                                "reply_markup" => $replyKeyboardHide);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_3);
+        }
+        else if ($state_id == State::Business_Opportunity_3)
+        {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateBusinessMsgWithOfferText($chat_id, $text);
+            
+            // proceed to next question
+            sendTypingAction($chat_id);
+            $replyKeyboardHide = array("hide_keyboard" => true);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "What's your e-mail that I can reach you back?",
+                                "reply_markup" => $replyKeyboardHide);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_4);
+        }
+        else if ($state_id == Business_Opportunity_4)
+        {
+            
         }
 
         else if ($state_id == State::Personal_1)
