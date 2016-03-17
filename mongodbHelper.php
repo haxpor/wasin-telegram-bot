@@ -89,6 +89,28 @@ class mongodbHelper {
 	{
 		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("offerText" => $offerText, "update_at" => new MongoDate())), array("upsert" => true));
 	}
+
+	/**
+		Update businessMsg doc with proposerEmail.
+		Consult google doc for proposerEmail.
+
+		It will update "proposerEmail" field without remove other fields.
+	*/
+	public function updateBusinessMsgWithProposerEmail($chat_id, $proposerEmail)
+	{
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("proposerEmail" => $proposerEmail, "update_at" => new MongoDate())), array("upsert" => true));
+	}
+
+	/**
+		Update businessMsg doc with proposerFirstName.
+		Consult google doc for proposerFirstName.
+
+		It will update "proposerFirstName" field without remove other fields.
+	*/
+	public function updateBusinessMsgWithProposerFirstName($chat_id, $proposerFirstName)
+	{
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("proposerFirstName" => $proposerEmail, "update_at" => new MongoDate())), array("upsert" => true));
+	}
 }
 
 ?>

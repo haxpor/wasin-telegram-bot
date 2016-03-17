@@ -14,6 +14,8 @@
 		const Business_Opportunity_2 = 701;
 		const Business_Opportunity_3 = 702;
 		const Business_Opportunity_4 = 703;
+		const Business_Opportunity_5 = 704;
+		const Business_Opportunity_6 = 705;
 
 		// freelance work
 		const Freelancework_1 = 600;

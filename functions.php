@@ -589,9 +589,57 @@ function processMessage($message, $mongodb) {
             // save the state
             $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_4);
         }
-        else if ($state_id == Business_Opportunity_4)
+        else if ($state_id == State::Business_Opportunity_4)
         {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateBusinessMsgWithProposerEmail($chat_id, $text);
             
+            // proceed to next question
+            sendTypingAction($chat_id);
+            $replyKeyboardHide = array("hide_keyboard" => true);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "What's your first name?",
+                                "reply_markup" => $replyKeyboardHide);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_5);
+        }
+        else if ($state_id == State::Business_Opportunity_5)
+        {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateBusinessMsgWithProposerFirstName($chat_id, $text);
+            
+            // send notifying msg
+            sendTypingAction($chat_id);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "Your proposal information has been sent to me! Hoorayy!");
+            apiRequestJson("sendMessage", $parameters);
+
+            // send reply keyboard
+            sendTypingAction($chat_id);
+            $replyMarkup = array("keyboard" => array(array("👍")));
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "I will reach you back when I have time to carefully read and consider your request. Thank you so much!",
+                                "reply_markup" => $replyMarkup);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Business_Opportunity_6);
+        }
+        else if ($state_id == State::Business_Opportunity_6)
+        {
+            if (strpos($text, "👍") === 0)
+            {
+                // start it over while bypassing the greetings text
+                $state_id = State::Normal;
+                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+                $text = "/bypassstart";
+
+                goto PC;
+            }
         }
 
         else if ($state_id == State::Personal_1)
