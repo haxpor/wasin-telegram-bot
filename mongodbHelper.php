@@ -109,7 +109,30 @@ class mongodbHelper {
 	*/
 	public function updateBusinessMsgWithProposerFirstName($chat_id, $proposerFirstName)
 	{
-		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("proposerFirstName" => $proposerEmail, "update_at" => new MongoDate())), array("upsert" => true));
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("proposerFirstName" => $proposerFirstName, "update_at" => new MongoDate())), array("upsert" => true));
+	}
+
+	/**
+		Update businessMsg doc with status.
+		Consult google doc for status.
+
+		It will update "status" field without remove other fields.
+	*/
+	public function updateBusinessMsgWithStatus($chat_id, $status)
+	{
+		$this->businessMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("status" => $status, "update_at" => new MongoDate())), array("upsert" => true));
+	}
+
+	/**
+		Get document via chat_id from businessMsg collection.
+
+		@return Document
+	*/
+	public function getDocInBusinessMsgCollection($chat_id)
+	{
+		$query = array("chat_id" => $chat_id);
+		$doc = $this->businessMsgCollection->findOne($query);
+		return $doc;
 	}
 }
 

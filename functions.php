@@ -633,6 +633,30 @@ function processMessage($message, $mongodb) {
         {
             if (strpos($text, "👍") === 0)
             {
+                // time to send e-mail including all informatio of request back to Wasin :)
+                // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
+                if (PRODUCTION)
+                {
+                    // get document via chat_id
+                    $doc = getDocInBusinessMsgCollection($chat_id);
+
+                    if (!empty($doc))
+                    {
+                        // proposer email is the most important field we need to have 
+                        if (isset($doc["proposerEmail"]))
+                        {
+                            // send email
+                            $result = sendEmailOfProposedBusinessOpportunity($doc["type_id"], $doc["productDescriptionText"], $doc["offerText"], $doc["proposerEmail"], $doc["proposerFirstName"]);
+
+                            // update status if it's sent successfully
+                            if ($result)
+                            {
+                                updateBusinessMsgWithStatus(1);
+                            }
+                        }
+                    }
+                }
+
                 // start it over while bypassing the greetings text
                 $state_id = State::Normal;
                 $mongodb->updateDocToStateCollection($chat_id, State::Normal);
@@ -684,6 +708,58 @@ function sendFindingLocationAction($chat_id)
     $parameters = array("chat_id" => $chat_id,
                         "action" => "find_location");
     apiRequestJson("sendChatAction", $parameters);
+}
+
+/*
+    Send email with all gathered information from proposed business opportunity.
+
+    @return True if sending email is successful, otherwise return false.
+*/
+function sendEmailOfProposedBusinessOpportunity($type_id, $productDescriptionText, $offerText, $proposerEmail, $proposerFirstName)
+{
+    $typeText = getTextFromBusinessOpportunityTypeId($type_id);
+
+    $to = 'haxpor@gmail.com';
+    $subject = 'Business Opportunity from ' . $proposerFirstName;
+    $headers = 'From: wasin@wasin.io' . "\r\n" .
+            'Reply-To: ' . $proposerEmail . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+    $msg = "Product description:\r\n" . $productDescriptionText . "\r\n\r\n";
+    $msg .= "Offer:\r\n" . $offerText . "\r\n";
+
+    $result = mail($to, $subject, $msg, $headers);
+    return $result;
+}
+
+/*
+    Get text description of the input business opportunity's type id.
+
+    @return Text description according to input type_id
+*/
+function getTextFromBusinessOpportunityTypeId($type_id)
+{
+    if ($type_id == 1)
+    {
+        return "Tech startup";
+    }
+    else if ($type_id == 2)
+    {
+        return "Game development";
+    }
+    else if ($type_id == 3)
+    {
+        return "Blended of 1, and 2.";
+    }
+    else if ($type_id == 4)
+    {
+        return "Others";
+    }
+    else
+    {
+        // should not happen
+        return "Unknown";
+    }
 }
 
 ?>

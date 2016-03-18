@@ -3,17 +3,19 @@
 
 if (php_sapi_name() == 'cli') {
 	
-	include('functions.php');
 	include('config.php');
+	include('functions.php');
 	include('configapikey.php');
 
 	if (PRODUCTION)
 	{
-		define('WEBHOOK_URL', 'https://your/production/webhook/url.php');
+		// the php script to link to is api.php so you don't need to change this part
+		define('WEBHOOK_URL', 'https://your/production/webhook/api.php');
 	}
 	else
 	{
-		define('WEBHOOK_URL', 'https://your/development/webhook/url.php');
+		// the php script to link to is api.php so you don't need to change this part
+		define('WEBHOOK_URL', 'https://your/development/webhook/api.php');
 	}
 
 	// if run from console, set or delete webhook
