@@ -617,7 +617,7 @@ function processMessage($message, $mongodb) {
             if (PRODUCTION)
             {
                 // get document via chat_id
-                $doc = getDocInBusinessMsgCollection($chat_id);
+                $doc = $mongodb->getDocInBusinessMsgCollection($chat_id);
 
                 if (!empty($doc))
                 {
