@@ -354,7 +354,7 @@ function processMessage($message, $mongodb) {
                 sendTypingAction($chat_id);
 
                 // create a reply markup
-                $replyMarkup = array("keyboard" => array(array("1. Tech startup"), array("2. Game development"), array("3. Blended of 1 and 2"), array("4. Others")));
+                $replyMarkup = array("keyboard" => array(array("Tech startup"), array("Game development"), array("Tech startup + Game"), array("Others")));
 
                 $parameters = array("chat_id" => $chat_id,
                                     "text" => "What is it about?",
@@ -369,7 +369,7 @@ function processMessage($message, $mongodb) {
                 sendTypingAction($chat_id);
 
                 // create a reply markup
-                $replyMarkup = array("keyboard" => array(array("1. Mobile game", "2. PC game"), array("3. HTML5 game"), array("4. Fully cross-platform game"), array("5. iOS application"), array("6. Landing page")));
+                $replyMarkup = array("keyboard" => array(array("Mobile game", "PC game"), array("HTML5 game"), array("Fully cross-platform game"), array("iOS application"), array("Landing page")));
 
                 $parameters = array("chat_id" => $chat_id,
                                     "text" => "What do you want to get it done?",
@@ -396,42 +396,42 @@ function processMessage($message, $mongodb) {
         {
             $isOk = false;
 
-            if (strpos($text, "1. Mobile game") === 0)
+            if (strpos($text, "Mobile game") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 1);
 
                 $isOk = true;
             }
-            else if (strpos($text, "2. PC game") === 0)
+            else if (strpos($text, "PC game") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 2);
 
                 $isOk = true;
             }
-            else if (strpos($text, "3. HTML5 game") === 0)
+            else if (strpos($text, "HTML5 game") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 3);
 
                 $isOk = true;
             }
-            else if (strpos($text, "4. Fully cross-platform game") === 0)
+            else if (strpos($text, "Fully cross-platform game") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 4);
 
                 $isOk = true;
             }
-            else if (strpos($text, "5. iOS application") === 0)
+            else if (strpos($text, "iOS application") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 5);
 
                 $isOk = true;
             }
-            else if (strpos($text, "6. Landing page") === 0)
+            else if (strpos($text, "Landing page") === 0)
             {
                 // save information for later submission
                 $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 6);
@@ -648,28 +648,28 @@ function processMessage($message, $mongodb) {
         {
             $isOk = false;
 
-            if (strpos($text, "1. Tech startup") === 0)
+            if (strpos($text, "Tech startup") === 0)
             {
                 // save information for later submission
                 $mongodb->updateBusinessMsgWithTypeId($chat_id, 1);
 
                 $isOk = true;
             }
-            else if (strpos($text, "2. Game development") === 0)
+            else if (strpos($text, "Game development") === 0)
             {
                 // save information for later submission
                 $mongodb->updateBusinessMsgWithTypeId($chat_id, 2);
 
                 $isOk = true;
             }
-            else if (strpos($text, "3. Blended of 1 and 2") === 0)
+            else if (strpos($text, "Tech startup + Game") === 0)
             {
                 // save information for later submission
                 $mongodb->updateBusinessMsgWithTypeId($chat_id, 3);
 
                 $isOk = true;
             }
-            else if (strpos($text, "4. Others") === 0)
+            else if (strpos($text, "Others") === 0)
             {
                 // save information for later submission
                 $mongodb->updateBusinessMsgWithTypeId($chat_id, 4);
