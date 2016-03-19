@@ -611,8 +611,33 @@ function processMessage($message, $mongodb) {
             // anything can go here as it's open-ended answer
             // save the answer
             $mongodb->updateBusinessMsgWithProposerFirstName($chat_id, $text);
+
+            // time to send e-mail including all informatio of request back to Wasin :)
+            // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
+            if (PRODUCTION)
+            {
+                // get document via chat_id
+                $doc = getDocInBusinessMsgCollection($chat_id);
+
+                if (!empty($doc))
+                {
+                    // proposer email is the most important field we need to have 
+                    if (isset($doc["proposerEmail"]))
+                    {
+                        // send email
+                        $result = sendEmailOfProposedBusinessOpportunity($doc["type_id"], $doc["productDescriptionText"], $doc["offerText"], $doc["proposerEmail"], $doc["proposerFirstName"]);
+
+                        // update status if it's sent successfully
+                        if ($result)
+                        {
+                            $mongodb->updateBusinessMsgWithStatus(1);
+                        }
+                    }
+                }
+            }
             
             // send notifying msg
+            // regardless of result here, if something wrong happened, I'll check it and manually send it myself
             sendTypingAction($chat_id);
             $parameters = array("chat_id" => $chat_id,
                                 "text" => "Your proposal information has been sent to me! Hoorayy!");
@@ -633,30 +658,6 @@ function processMessage($message, $mongodb) {
         {
             if (strpos($text, "👍") === 0)
             {
-                // time to send e-mail including all informatio of request back to Wasin :)
-                // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
-                if (PRODUCTION)
-                {
-                    // get document via chat_id
-                    $doc = getDocInBusinessMsgCollection($chat_id);
-
-                    if (!empty($doc))
-                    {
-                        // proposer email is the most important field we need to have 
-                        if (isset($doc["proposerEmail"]))
-                        {
-                            // send email
-                            $result = sendEmailOfProposedBusinessOpportunity($doc["type_id"], $doc["productDescriptionText"], $doc["offerText"], $doc["proposerEmail"], $doc["proposerFirstName"]);
-
-                            // update status if it's sent successfully
-                            if ($result)
-                            {
-                                updateBusinessMsgWithStatus(1);
-                            }
-                        }
-                    }
-                }
-
                 // start it over while bypassing the greetings text
                 $state_id = State::Normal;
                 $mongodb->updateDocToStateCollection($chat_id, State::Normal);
