@@ -286,114 +286,6 @@ function processMessage($message, $mongodb) {
                                     "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
             }
-            // getname
-            else if (strpos($text, "/getname") === 0)
-            {
-                sendTypingAction($chat_id);
-
-                $parameters = array("chat_id" => $chat_id,
-                                    "text"  =>  "Wasin Thonkaew");
-                apiRequestJson("sendMessage", $parameters);
-            }
-    		// getnickname
-            else if (strpos($text, "/getnickname") === 0)
-    		{
-                sendTypingAction($chat_id);
-
-    			$parameters = array("chat_id" => $chat_id,
-    								"text"	=>	"Best");
-    			apiRequestJson("sendMessage", $parameters);
-            }
-    		// getsocial
-    		else if (strpos($text, "/getsocial") === 0)
-    		{
-                sendTypingAction($chat_id);
-
-    			$parameters = array("chat_id" => $chat_id,
-    								"text" => "Twitter: [@haxpor](https://twitter.com/haxpor)\nFacebook: [Wasin Thonkaew](https://www.facebook.com/wasin.thonkaew)\nInstagram: [haxpor](https://www.instagram.com/haxpor/)\nWebsite: [https://wasin.io](https://wasin.io)",
-    								"parse_mode" => "Markdown",
-    								"disable_web_page_preview" => true);
-    			apiRequestJson("sendMessage", $parameters);
-    		}
-    		// getfreelancingrate
-    		else if (strpos($text, "/getfreelancingrate") === 0)
-    		{
-                sendTypingAction($chat_id);
-
-    			$parameters = array("chat_id" => $chat_id,
-    								"text"	=>	"28 USD / Hour");
-    			apiRequestJson("sendMessage", $parameters);
-    		}
-    		// getcurrentlocation
-    		else if (strpos($text, "/getcurrentlocation") === 0)
-    		{
-                sendFindingLocationAction($chat_id);
-
-    			$parameters = array("chat_id" => $chat_id,
-    								"latitude" => 18.786497,
-    								"longitude" => 98.991522);
-    			apiRequestJson("sendLocation", $parameters);
-    		}
-    		// getproductsmade
-    		else if (strpos($text, "/getproductsmade") === 0)
-    		{
-                sendTypingAction($chat_id);
-                
-    			$parameters = array("chat_id" => $chat_id,
-    								"text" => "Zombie Hero : Revenge of Kiki\n - Website: [http://zombie-hero.com](http://zombie-hero.com)\n - App Store: [Download](https://itunes.apple.com/app/zombie-hero-revenge-of-kiki/id904184868?mt=8)\n\nIndiedevBkk - [Website](http://indiedevbkk.tk)",
-    								"parse_mode" => "Markdown",
-    								"disable_web_page_preview" => true);
-    			apiRequestJson("sendMessage", $parameters);
-    		}
-    		// getlistofclients
-    		else if (strpos($text, "/getlistofclients") === 0)
-    		{
-    			// aerothai
-    			{
-                    // send upload photo action
-                    sendUploadPhotoAction($chat_id);
-
-                    {
-                        // get the realpath of image file to serve to user
-                        if (PRODUCTION)
-                        {
-                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png");
-                        }
-                        else
-                        {
-                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/aerothai-logo.png");
-                        }
-
-    				    $parameters = array("chat_id" => $chat_id,
-    								"photo" => new CURLFile($realpath),
-    								"caption" => "Aeronautical Radio of Thailand LTD");
-    				    apiRequestSendPhoto($chat_id, $parameters);
-                    }
-    			}
-
-    			// playbasis
-    			{
-                    // send upload photo action
-                    sendUploadPhotoAction($chat_id);
-
-                    {
-                        // get the realpath of image file to serve to user
-                        if (PRODUCTION)
-                        {
-                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png");
-                        }
-                        else
-                        {
-                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/playbasis-logo.png");
-                        }
-
-    				    $parameters = array("chat_id" => $chat_id,
-                                    "photo" => new CURLFile($realpath),
-                                    "caption" => "Playbasis");
-                        apiRequestSendPhoto($chat_id, $parameters);
-                    }
-    			}
-    		}
         }
         else if ($state_id == State::Start_Answer)
         {
@@ -920,9 +812,222 @@ function processMessage($message, $mongodb) {
             }
         }
 
+        // Personal
         else if ($state_id == State::Personal_1)
         {
+            $textResponse = "";
 
+            if (strpos($text, "Absolutely! 😉") === 0)
+            {
+                $textResponse = "Cool! What do you want to know more about me?";
+            }
+            else if (strpos($text, "Nahh, maybe... I just want to know you more 😬") === 0)
+            {
+                $textResponse = "Not an issue 😉\nWhat do you want to know more about me then?";
+            }
+            // special case, programmatically restart the choice option screen again
+            // when personal path finishes individual request, then it should go back to State::Personal_1 state, alongwith the set of $text to be exactly "startagain".
+            else if (strpos($text, "startagain") === 0)
+            {
+                $textResponse = "Anything else?";
+            }
+
+            sendTypingAction($chat_id);
+            $replyMarkup = array("keyboard" => array(array("Name", "Nick name"), array("🐶 List of my social networks"), array("💵 Freelancing rate"), array("📍Current location"), array("📦 Notable things I made"), array("📘 List of clients"), array("OKAY, enough of it! 😂")));
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => $textResponse,
+                                "reply_markup" => $replyMarkup);
+            apiRequestJson("sendMessage", $parameters);
+
+            // proceed to next state
+            $mongodb->updateDocToStateCollection($chat_id, State::Personal_2);
+        }
+        else if ($state_id == State::Personal_2)
+        {
+            if (strpos($text, "Name") === 0)
+            {
+                $text = "/getname";
+            }
+            else if (strpos($text, "Nick name") === 0)
+            {
+                $text = "/getnickname";
+            }
+            else if (strpos($text, "🐶 List of my social networks") === 0)
+            {
+                $text = "/getsocial";
+            }
+            else if (strpos($text, "💵 Freelancing rate") === 0)
+            {
+                $text = "/getfreelancingrate";
+            }
+            else if (strpos($text, "📍Current location") === 0)
+            {
+                $text = "/getcurrentlocation";
+            }
+            else if (strpos($text, "📦 Notable things I made") === 0)
+            {
+                $text = "/getproductsmade";
+            }
+            else if (strpos($text, "📘 List of clients") === 0)
+            {
+                $text = "/getlistofclients";
+            }
+            else if (strpos($text, "OKAY, enough of it! 😂") === 0)
+            {
+                // restart the flow again
+                $text = "/startoverfrompersonal";
+            }
+
+            // execute according to the text operation
+            // change $text to text operation that needs to be carried out according to the above statements
+
+            $isExecutedCommand = false;
+            // getname
+            if (strpos($text, "/getname") === 0)
+            {
+                // send answer
+                sendTypingAction($chat_id);
+                $parameters = array("chat_id" => $chat_id,
+                                    "text"  =>  "Wasin Thonkaew");
+                apiRequestJson("sendMessage", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getnickname
+            else if (strpos($text, "/getnickname") === 0)
+            {
+                sendTypingAction($chat_id);
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text"  =>  "Best");
+                apiRequestJson("sendMessage", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getsocial
+            else if (strpos($text, "/getsocial") === 0)
+            {
+                sendTypingAction($chat_id);
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "Twitter: [@haxpor](https://twitter.com/haxpor)\nFacebook: [Wasin Thonkaew](https://www.facebook.com/wasin.thonkaew)\nInstagram: [haxpor](https://www.instagram.com/haxpor/)\nWebsite: [https://wasin.io](https://wasin.io)",
+                                    "parse_mode" => "Markdown",
+                                    "disable_web_page_preview" => true);
+                apiRequestJson("sendMessage", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getfreelancingrate
+            else if (strpos($text, "/getfreelancingrate") === 0)
+            {
+                sendTypingAction($chat_id);
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text"  =>  "28 USD / Hour");
+                apiRequestJson("sendMessage", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getcurrentlocation
+            else if (strpos($text, "/getcurrentlocation") === 0)
+            {
+                sendFindingLocationAction($chat_id);
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "latitude" => 18.786497,
+                                    "longitude" => 98.991522);
+                apiRequestJson("sendLocation", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getproductsmade
+            else if (strpos($text, "/getproductsmade") === 0)
+            {
+                sendTypingAction($chat_id);
+                
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "Zombie Hero : Revenge of Kiki\n - Website: [http://zombie-hero.com](http://zombie-hero.com)\n - App Store: [Download](https://itunes.apple.com/app/zombie-hero-revenge-of-kiki/id904184868?mt=8)\n\nIndiedevBkk - [Website](http://indiedevbkk.tk)",
+                                    "parse_mode" => "Markdown",
+                                    "disable_web_page_preview" => true);
+                apiRequestJson("sendMessage", $parameters);
+
+                $isExecutedCommand = true;
+            }
+            // getlistofclients
+            else if (strpos($text, "/getlistofclients") === 0)
+            {
+                // aerothai
+                {
+                    // send upload photo action
+                    sendUploadPhotoAction($chat_id);
+
+                    {
+                        // get the realpath of image file to serve to user
+                        if (PRODUCTION)
+                        {
+                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png");
+                        }
+                        else
+                        {
+                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/aerothai-logo.png");
+                        }
+
+                        $parameters = array("chat_id" => $chat_id,
+                                    "photo" => new CURLFile($realpath),
+                                    "caption" => "Aeronautical Radio of Thailand LTD");
+                        apiRequestSendPhoto($chat_id, $parameters);
+                    }
+                }
+
+                // playbasis
+                {
+                    // send upload photo action
+                    sendUploadPhotoAction($chat_id);
+
+                    {
+                        // get the realpath of image file to serve to user
+                        if (PRODUCTION)
+                        {
+                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png");
+                        }
+                        else
+                        {
+                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/playbasis-logo.png");
+                        }
+
+                        $parameters = array("chat_id" => $chat_id,
+                                    "photo" => new CURLFile($realpath),
+                                    "caption" => "Playbasis");
+                        apiRequestSendPhoto($chat_id, $parameters);
+                    }
+                }
+
+                $isExecutedCommand = true;
+            }
+            else if (strpos($text, "/startoverfrompersonal") === 0)
+            {
+                sendTypingAction($chat_id);
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "I believe you know more about me now ✌️😀✌️");
+                apiRequestJson("sendMessage", $parameters);
+
+                // start it over
+                $state_id = State::Normal;
+                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+                $text = "/bypassstart";
+                goto PC;
+            }
+
+            // if command is executed then take user back to main choice screen
+            if ($isExecutedCommand)
+            {
+                // take user back main chioce screen
+                $text = "startagain";
+                $state_id = State::Personal_1;
+                $mongodb->updateDocToStateCollection($chat_id, State::Personal_1);
+                goto PC;
+            }
         }
     }
     else

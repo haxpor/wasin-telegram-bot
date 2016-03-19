@@ -28,6 +28,7 @@
 
 		// personal path
 		const Personal_1 = 7;
+		const Personal_2 = 8;
 	}
 
 ?>
