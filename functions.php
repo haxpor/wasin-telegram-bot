@@ -486,7 +486,18 @@ function processMessage($message, $mongodb) {
             }
             else if (strpos($text, "Freelance work") === 0)
             {
-                
+                sendTypingAction($chat_id);
+
+                // create a reply markup
+                $replyMarkup = array("keyboard" => array(array("1. Mobile game", "2. PC game"), array("3. HTML5 game"), array("4. Fully cross-platform game"), array("5. iOS application"), array("6. Landing page")));
+
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "What do you want to get it done?",
+                                    "reply_markup" => $replyMarkup);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_1);
             }
             else
             {
@@ -499,6 +510,85 @@ function processMessage($message, $mongodb) {
             }
         }
 
+        // Business
+        //  |_ Freelance Work
+        else if ($state_id == State::Freelancework_1)
+        {
+            $isOk = false;
+
+            if (strpos($text, "1. Mobile game") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 1);
+
+                $isOk = true;
+            }
+            else if (strpos($text, "2. PC game") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 2);
+
+                $isOk = true;
+            }
+            else if (strpos($text, "3. HTML5 game") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 3);
+
+                $isOk = true;
+            }
+            else if (strpos($text, "4. Fully cross-platform game") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 4);
+
+                $isOk = true;
+            }
+            else if (strpos($text, "5. iOS application") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 5);
+
+                $isOk = true;
+            }
+            else if (strpos($text, "6. Landing page") === 0)
+            {
+                // save information for later submission
+                $mongodb->updateFreelanceworkMsgWithTypeId($chat_id, 6);
+
+                $isOk = true;
+            }
+
+            if ($isOk)
+            {
+                // proceed to next question
+                sendTypingAction($chat_id);
+                $replyKeyboardHide = array("hide_keyboard" => true);
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "Tell me about the idea",
+                                    "reply_markup" => $replyKeyboardHide);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_2);
+            }
+            else
+            {
+                // repeat the question again
+                $state_id = State::Business_2;
+                $text = "Freelance work";
+                $mongodb->updateDocToStateCollection($chat_id, State::Business_2);
+
+                goto PC;
+            }
+        }
+        else if ($state_id == State::Freelancework_2)
+        {
+            
+        }
+
+        // Business
+        //  |_ Business Opportunity
         else if ($state_id == State::Business_Opportunity_1)
         {
             $isOk = false;

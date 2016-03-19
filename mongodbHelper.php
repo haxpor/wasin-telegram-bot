@@ -6,6 +6,7 @@ class mongodbHelper {
 	private $db;
 	private $stateCollection;
 	private $businessMsgCollection;
+	private $freelanceworkMsgCollection;
 
 	public function __construct()
 	{
@@ -13,6 +14,7 @@ class mongodbHelper {
 		$this->db = $this->m->wasinbot;
 		$this->stateCollection = $this->db->state;
 		$this->businessMsgCollection = $this->db->businessMsg;
+		$this->freelanceworkMsgCollection = $this->db->freelanceworkMsg;
 	}
 
 	public function hasDocInStateCollection($chat_id)
@@ -133,6 +135,29 @@ class mongodbHelper {
 		$query = array("chat_id" => $chat_id);
 		$doc = $this->businessMsgCollection->findOne($query);
 		return $doc;
+	}
+
+	/**
+		Get document via chat_id from freelanceworkMsg collection.
+
+		@return Document
+	*/
+	public function getDocInFreelanceworkMsgCollection($chat_id)
+	{
+		$query = array("chat_id" => $chat_id);
+		$doc = $this->freelanceworkMsgCollection->findOne($query);
+		return $doc;
+	}
+
+	/**
+		Update freelanceworkMsg doc with type_id.
+		Consult google doc for type_id.
+
+		It will update "type_id" field without remove other fields.
+	*/
+	public function updateFreelanceworkMsgWithTypeId($chat_id, $type_id)
+	{
+		$this->freelanceworkMsgCollection->update(array("chat_id" => $chat_id), array('$set' => array("type_id" => $type_id, "update_at" => new MongoDate())), array("upsert" => true));
 	}
 }
 
