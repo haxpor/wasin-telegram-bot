@@ -198,22 +198,8 @@ function processMessage($message, $mongodb) {
         // incoming text message
         $text = $message['text'];
 
-        // stop will not up to the current state
-        if (strpos($text, "/startover") === 0)
-        {
-            sendTypingAction($chat_id);
-
-            $parameters = array("chat_id" => $chat_id,
-                                "text" => "Good bye for now. Come back whenever you want. I'm always here :)");
-            apiRequestJson("sendMessage", $parameters);
-
-            // start it over
-            $state_id = State::Normal;
-            $mongodb->updateDocToStateCollection($chat_id, State::Normal);
-            $text = "/start";
-        }
         // need to have this in case of restart the bot after deleting
-        else if (strpos($text, "/start") === 0)
+        if (strpos($text, "/start") === 0)
         {
             // start it over
             $state_id = State::Normal;
@@ -227,7 +213,8 @@ function processMessage($message, $mongodb) {
             $mongodb->updateDocToStateCollection($chat_id, State::Normal);
         }
         // stop
-        else if (strpos($text, "/stop") === 0)
+        else if (strpos($text, "/stop") === 0 ||
+                 strpos($text, "/startover") === 0)
         {
             sendTypingAction($chat_id);
 
@@ -239,6 +226,20 @@ function processMessage($message, $mongodb) {
             $state_id = State::Normal;
             $mongodb->updateDocToStateCollection($chat_id, State::Normal);
             $text = "/bypassstart";
+        }
+        else if (strpos($text, "/help") === 0)
+        {
+            sendTypingAction($chat_id);
+
+            // show the message to user no matter where's user is in at the moment
+            // so user may decide to continue the current flow, or start it over via /startover
+            $helpText = "Use /startover to begin the conversation from the beginning again.\nUse this when you get lost.";
+
+            $replyKeyboardHide = array("hide_keyboard" => true);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => $helpText,
+                                "keyboard" => $replyKeyboardHide);
+            apiRequestJson("sendMessage", $parameters);
         }
 
         PC:
@@ -283,19 +284,6 @@ function processMessage($message, $mongodb) {
                 $parameters = array("chat_id" => $chat_id,
                                     "text" => "What can I help you?",
                                     "reply_markup" => $replyMarkup);
-                apiRequestJson("sendMessage", $parameters);
-            }
-            // help
-            else if (strpos($text, "/help") === 0)
-            {
-                sendTypingAction($chat_id);
-
-                // get the latest help text from gist
-                $helpText = file_get_contents('https://gist.githubusercontent.com/haxpor/9a9dbe1a38782b792ca1/raw/565d9dd73473fc020b0f7b97b705e198b8bebfa6/wasinbot-commands.txt');
-
-
-                $parameters = array("chat_id" => $chat_id,
-                                    "text" => $helpText);
                 apiRequestJson("sendMessage", $parameters);
             }
             // getname
