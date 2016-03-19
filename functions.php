@@ -630,7 +630,7 @@ function processMessage($message, $mongodb) {
                         // update status if it's sent successfully
                         if ($result)
                         {
-                            $mongodb->updateBusinessMsgWithStatus(1);
+                            $mongodb->updateBusinessMsgWithStatus($chat_id, 1);
                         }
                     }
                 }
