@@ -584,7 +584,182 @@ function processMessage($message, $mongodb) {
         }
         else if ($state_id == State::Freelancework_2)
         {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateFreelanceworkMsgWithIdeaText($chat_id, $text);
+
+            // proceed to next question
+            sendTypingAction($chat_id);
+
+            $replyMarkup = array("keyboard" => array(array("💵 < $3,000"), array("💵💵 $8,500"), array("💰 $15,000"), array("💰💰💰 $30,000")));
+
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "What's your budget?",
+                                "reply_markup" => $replyMarkup);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_3);
+        }
+        else if ($state_id == State::Freelancework_3)
+        {
+            $isOk = false;
+
+            if (strpos($text, "💵 < $3,000") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithBudgetTypeId($chat_id, 1);
+                $isOk = true;
+            }
+            else if (strpos($text, "💵💵 $8,500") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithBudgetTypeId($chat_id, 2);
+                $isOk = true;
+            }
+            else if (strpos($text, "💰 $15,000") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithBudgetTypeId($chat_id, 3);
+                $isOk = true;
+            }
+            else if (strpos($text, "💰💰💰 $30,000") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithBudgetTypeId($chat_id, 4);
+                $isOk = true;
+            }
+
+            // if received input properly, then proceed to next question
+            if ($isOk)
+            {
+                sendTypingAction($chat_id);
+                $replyMarkup = array("keyboard" => array(array("ASAP! 🏇", "1 month"), array("2-3 months"), array("<= 6 months"), array("<= 1 year")));
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "How much time do I have for development?",
+                                    "reply_markup" => $replyMarkup);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_4);
+            }
+        }
+        else if ($state_id == State::Freelancework_4)
+        {
+            $isOk = false;
+
+            if (strpos($text, "ASAP! 🏇") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithTimeTypeId($chat_id, 1);
+                $isOk = true;
+            }
+            else if (strpos($text, "1 month") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithTimeTypeId($chat_id, 2);
+                $isOk = true;
+            }
+            else if (strpos($text, "2-3 months") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithTimeTypeId($chat_id, 3);
+                $isOk = true;
+            }
+            else if (strpos($text, "<= 6 months") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithTimeTypeId($chat_id, 4);
+                $isOk = true;
+            }
+            else if (strpos($text, "<= 1 year") === 0)
+            {
+                $mongodb->updateFreelanceworkMsgWithTimeTypeId($chat_id, 5);
+                $isOk = true;
+            }
+
+            // if received input properly, then proceed to next question
+            if ($isOk)
+            {
+                sendTypingAction($chat_id);
+                $replyKeyboardHide = array("hide_keyboard" => true);
+                $parameters = array("chat_id" => $chat_id,
+                                    "text" => "What's your e-mail for me to reach you back?",
+                                    "reply_markup" => $replyKeyboardHide);
+                apiRequestJson("sendMessage", $parameters);
+
+                // proceed to next state
+                $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_5);
+            }
+        }
+        else if ($state_id == State::Freelancework_5)
+        {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateFreelanceworkMsgWithProposerEmail($chat_id, $text);
+
+            // proceed to next question
+            sendTypingAction($chat_id);
+            $replyKeyboardHide = array("hide_keyboard" => true);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "What's your first name?",
+                                "reply_markup" => $replyKeyboardHide);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_6);
+        }
+        else if ($state_id == State::Freelancework_6)
+        {
+            // anything can go here as it's open-ended answer
+            // save the answer
+            $mongodb->updateFreelanceworkMsgWithProposerFirstName($chat_id, $text);
+
+            // time to send e-mail including all informatio of request back to Wasin :)
+            // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
+            if (PRODUCTION)
+            {
+                // get document via chat_id
+                $doc = $mongodb->getDocInFreelanceworkMsgCollection($chat_id);
+
+                if (!empty($doc))
+                {
+                    // proposer email is the most important field we need to have 
+                    if (isset($doc["proposerEmail"]))
+                    {
+                        // send email
+                        $result = sendEmailOfProposedFreelancework($doc["type_id"], $doc["ideaText"], $doc["budgetTypeId"], $doc["timeTypeId"], $doc["proposerEmail"], $doc["proposerFirstName"]);
+
+                        // update status if it's sent successfully
+                        if ($result)
+                        {
+                            $mongodb->updateFreelanceworkMsgWithStatus($chat_id, 1);
+                        }
+                    }
+                }
+            }
             
+            // send notifying msg
+            // regardless of result here, if something wrong happened, I'll check it and manually send it myself
+            sendTypingAction($chat_id);
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "Your freelance work proposal has been sent to me! Hoorayy!");
+            apiRequestJson("sendMessage", $parameters);
+
+            // send reply keyboard
+            sendTypingAction($chat_id);
+            $replyMarkup = array("keyboard" => array(array("👍")));
+            $parameters = array("chat_id" => $chat_id,
+                                "text" => "I will reach you back when I have time to carefully read and consider your request. Thank you so much!",
+                                "reply_markup" => $replyMarkup);
+            apiRequestJson("sendMessage", $parameters);
+
+            // save the state
+            $mongodb->updateDocToStateCollection($chat_id, State::Freelancework_7);
+        }
+        else if ($state_id == State::Freelancework_7)
+        {
+            if (strpos($text, "👍") === 0)
+            {
+                // start it over while bypassing the greetings text
+                $state_id = State::Normal;
+                $mongodb->updateDocToStateCollection($chat_id, State::Normal);
+                $text = "/bypassstart";
+
+                goto PC;
+            }
         }
 
         // Business
@@ -824,6 +999,35 @@ function sendEmailOfProposedBusinessOpportunity($type_id, $productDescriptionTex
 }
 
 /*
+    Send email with all gathered information from proposed freelancework.
+
+    @return True if sending email is successful, otherwise return false.
+*/
+function sendEmailOfProposedFreelancework($type_id, $ideaText, $budgetTypeId, $timeTypeId, $proposerEmail, $proposerFirstName)
+{
+    // type text
+    $typeText = getTextFromFreelancework_TypeId($type_id);
+    // budget text
+    $budgetText = getTextFromFreelancework_BudgetTypeId($budgetTypeId);
+    // time text
+    $timeText = getTextFromFreelancework_TimeTypeId($timeTypeId);
+
+    $to = 'haxpor@gmail.com';
+    $subject = 'Freelance work Proposal from ' . $proposerFirstName;
+    $headers = 'From: wasin@wasin.io' . "\r\n" .
+            'Reply-To: ' . $proposerEmail . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+    $msg = "Project type:\r\n" . $typeText . "\r\n\r\n";
+    $msg .= "Idea:\r\n" . $ideaText . "\r\n\r\n";
+    $msg .= "Budget:\r\n" . $budgetText . "\r\n\r\n";
+    $msg .= "Development time:\r\n" . $timeText . "\r\n\r\n";
+
+    $result = mail($to, $subject, $msg, $headers);
+    return $result;
+}
+
+/*
     Get text description of the input business opportunity's type id.
 
     @return Text description according to input type_id
@@ -845,6 +1049,108 @@ function getTextFromBusinessOpportunityTypeId($type_id)
     else if ($type_id == 4)
     {
         return "Others";
+    }
+    else
+    {
+        // should not happen
+        return "Unknown";
+    }
+}
+
+/**
+    Get text description from freelancework's type_id.
+
+    @return Text description according to input of type_id.
+*/
+function getTextFromFreelancework_TypeId($type_id)
+{
+    if ($type_id == 1)
+    {
+        return "Mobile game";
+    }
+    else if ($type_id == 2)
+    {
+        return "PC game";
+    }
+    else if ($type_id == 3)
+    {
+        return "HTML5 game";
+    }
+    else if ($type_id == 4)
+    {
+        return "Fully cross-platform game";
+    }
+    else if ($type_id == 5)
+    {
+        return "iOS application";
+    }
+    else if ($type_id == 6)
+    {
+        return "Landing page";
+    }
+    else
+    {
+        // should not happen
+        return "Unknown";
+    }
+}
+
+/**
+    Get text description from budgetTypeId.
+
+    @return Text description according to input of budgetTypeId.
+*/
+function getTextFromFreelancework_BudgetTypeId($budgetTypeId)
+{
+    if ($budgetTypeId == 1)
+    {
+        return "Less than $3,000";
+    }
+    else if ($budgetTypeId == 2)
+    {
+        return "$8,500";
+    }
+    else if ($budgetTypeId == 3)
+    {
+        return "$15,000";
+    }
+    else if ($budgetTypeId == 4)
+    {
+        return "$30,000";
+    }
+    else
+    {
+        // should not happen
+        return "Unknown";
+    }
+}
+
+/**
+    Get text description from timeTypeId.
+
+    @return Text description according to input of timeTypeId.
+*/
+function getTextFromFreelancework_TimeTypeId($timeTypeId)
+{
+    if ($timeTypeId == 1)
+    {
+        return "ASAP!";
+    }
+    else if ($timeTypeId == 2)
+    {
+        return "1 month";
+    }
+    else if ($timeTypeId == 3)
+    {
+        return "2-3 months";
+    }
+    else if ($timeTypeId == 4)
+    {
+        return "<= 6 months";
+    }
+    else if ($timeTypeId == 5)
+    {
+        return "<= 1 year";
     }
     else
     {
