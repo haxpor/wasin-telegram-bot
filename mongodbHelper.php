@@ -8,6 +8,9 @@ class mongodbHelper {
 	private $businessMsgCollection;
 	private $freelanceworkMsgCollection;
 
+	/**
+		Constructor method.
+	*/
 	public function __construct()
 	{
 		$this->m = new MongoClient();
@@ -17,6 +20,11 @@ class mongodbHelper {
 		$this->freelanceworkMsgCollection = $this->db->freelanceworkMsg;
 	}
 
+	/**
+		Check if there is a document with input "chat_id" in state collection.
+
+		@return true if there's a document with specified "chat_id", otherwise return false
+	*/
 	public function hasDocInStateCollection($chat_id)
 	{
 		$query = array("chat_id" => $chat_id);
@@ -31,6 +39,11 @@ class mongodbHelper {
 		}
 	}
 
+	/**
+		Get the document with specified "chat_id".
+
+		@return document with specified "chat_id"
+	*/
 	public function getDocInStateCollection($chat_id)
 	{
 		$query = array("chat_id" => $chat_id);
@@ -38,6 +51,9 @@ class mongodbHelper {
 		return $doc;
 	}
 
+	/**
+		Insert a new document into state collection with "state_id".
+	*/
 	public function insertDocToStateCollection($chat_id, $state_id)
 	{
 		$doc = array("chat_id" => $chat_id,
