@@ -61,6 +61,9 @@ class mongodbHelper {
 		$this->stateCollection->insert($doc);
 	}
 
+	/**
+		Update document to state collection with "state_id" data.
+	*/
 	public function updateDocToStateCollection($chat_id, $state_id)
 	{
 		$this->stateCollection->update(array("chat_id" => $chat_id),
@@ -70,6 +73,9 @@ class mongodbHelper {
                                 array("upsert" => false));
 	}
 
+	/**
+		Get "state_id" from specified document.
+	*/
 	public function getStateIdFromDoc($doc)
 	{
 		return $doc["state_id"];
