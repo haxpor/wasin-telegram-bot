@@ -253,9 +253,12 @@ function processMessage($message, $mongodb) {
                 $mongodb->updateDocToStateCollection($chat_id, State::Start_Answer);
 
                 // msg chunk 1
+                // note: in case of starting over, then hide keyboard for fresh start
                 sendTypingAction($chat_id);
+                $replyMarkup = array("hide_keyboard" => true);
                 $parameters = array("chat_id" => $chat_id,
-                                    "text" => "Greeting to you!");
+                                    "text" => "Greeting to you!",
+                                    "reply_markup" => $replyMarkup);
                 apiRequestJson("sendMessage", $parameters);
 
                 // msg chunk 2
