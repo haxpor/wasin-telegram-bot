@@ -937,8 +937,8 @@ function processMessage($message, $mongodb) {
                 sendFindingLocationAction($chat_id);
 
                 $parameters = array("chat_id" => $chat_id,
-                                    "latitude" => 18.786497,
-                                    "longitude" => 98.991522);
+                                    "latitude" => 26.492909,
+                                    "longitude" => 74.5546703);
                 apiRequestJson("sendLocation", $parameters);
 
                 $isExecutedCommand = true;
