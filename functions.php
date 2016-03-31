@@ -818,7 +818,7 @@ function processMessage($message, $mongodb) {
         // Personal
         else if ($state_id == State::Personal_1)
         {
-            $textResponse = "";
+            $textResponse = "Alright 😉";
 
             if (strpos($text, "Absolutely! 😉") === 0)
             {
@@ -959,6 +959,15 @@ function processMessage($message, $mongodb) {
             // getlistofclients
             else if (strpos($text, "/getlistofclients") === 0)
             {
+                // send msg first
+                {
+                    sendTypingAction($chat_id);
+
+                    $parameters = array("chat_id" => $chat_id,
+                                        "text"  =>  "Only some of selected clients here...");
+                    apiRequestJson("sendMessage", $parameters);
+                }
+
                 // aerothai
                 {
                     // send upload photo action
