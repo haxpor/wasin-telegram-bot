@@ -618,14 +618,14 @@ function processMessage($message, $mongodb) {
             // regardless of result here, if something wrong happened, I'll check it and manually send it myself
             sendTypingAction($chat_id);
             $parameters = array("chat_id" => $chat_id,
-                                "text" => "Your freelance work proposal has been sent to me! Hoorayy!");
+                                "text" => "Ok, got it! 😉");
             apiRequestJson("sendMessage", $parameters);
 
             // send reply keyboard
             sendTypingAction($chat_id);
             $replyMarkup = array("keyboard" => array(array("👍")));
             $parameters = array("chat_id" => $chat_id,
-                                "text" => "I will reach you back when I have time to carefully read and consider your request. Thank you so much!",
+                                "text" => "I will reach you back very soon. Thank you so much!",
                                 "reply_markup" => $replyMarkup);
             apiRequestJson("sendMessage", $parameters);
 
@@ -788,14 +788,14 @@ function processMessage($message, $mongodb) {
             // regardless of result here, if something wrong happened, I'll check it and manually send it myself
             sendTypingAction($chat_id);
             $parameters = array("chat_id" => $chat_id,
-                                "text" => "Your proposal information has been sent to me! Hoorayy!");
+                                "text" => "Ok, got it! 😉");
             apiRequestJson("sendMessage", $parameters);
 
             // send reply keyboard
             sendTypingAction($chat_id);
             $replyMarkup = array("keyboard" => array(array("👍")));
             $parameters = array("chat_id" => $chat_id,
-                                "text" => "I will reach you back when I have time to carefully read and consider your request. Thank you so much!",
+                                "text" => "I will reach you back very soon. Thank you so much!",
                                 "reply_markup" => $replyMarkup);
             apiRequestJson("sendMessage", $parameters);
 
@@ -926,7 +926,7 @@ function processMessage($message, $mongodb) {
                 sendTypingAction($chat_id);
 
                 $parameters = array("chat_id" => $chat_id,
-                                    "text"  =>  "28 USD / Hour");
+                                    "text"  =>  "28 USD / Hour, or flat rate depending on project 👌");
                 apiRequestJson("sendMessage", $parameters);
 
                 $isExecutedCommand = true;
