@@ -111,6 +111,12 @@ function apiRequest($method, $parameters) {
   	curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   	curl_setopt($handle, CURLOPT_TIMEOUT, 60);
 
+    $proxy = getenv('WASIN_TELEGRAM_BOT_PROXY');
+    if ( isset($proxy) && $proxy != "" && $proxy != null) {
+        curl_setopt($handle, CURLOPT_HTTPPROXYTUNNEL, true);
+        curl_setopt($handle, CURLOPT_PROXY, $proxy);
+    }
+
   	return exec_curl_request($handle);
 }
 
@@ -144,6 +150,12 @@ function apiRequestJson($method, $parameters)
   	curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($parameters));
 	curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 
+    $proxy = getenv('WASIN_TELEGRAM_BOT_PROXY');
+    if ( isset($proxy) && $proxy != "" && $proxy != null) {
+        curl_setopt($handle, CURLOPT_HTTPPROXYTUNNEL, true);
+        curl_setopt($handle, CURLOPT_PROXY, $proxy);
+    }
+
   	return exec_curl_request($handle);
 }
 
@@ -167,6 +179,12 @@ function apiRequestSendPhoto($chat_id, $parameters)
 	curl_setopt($handle, CURLOPT_URL, API_URL."sendPhoto?chat_id=" . $chat_id);
 	curl_setopt($handle, CURLOPT_POSTFIELDS, $parameters);
 	curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+
+    $proxy = getenv('WASIN_TELEGRAM_BOT_PROXY');
+    if ( isset($proxy) && $proxy != "" && $proxy != null) {
+        curl_setopt($handle, CURLOPT_HTTPPROXYTUNNEL, true);
+        curl_setopt($handle, CURLOPT_PROXY, $proxy);
+    }
 	
 	return exec_curl_request($handle);
 }
