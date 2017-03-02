@@ -2,7 +2,6 @@
 
 include('functions.php');
 include('mongodbHelper.php');
-include('config.php');
 include('configapikey.php');
 
 $content = file_get_contents("php://input");
