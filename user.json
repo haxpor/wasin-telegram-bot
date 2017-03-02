@@ -1,0 +1,31 @@
+db.updateUser(
+	"admin",
+	{
+  "roles" : [
+    {
+      "role" : "userAdminAnyDatabase",
+      "db" : "admin"
+    },
+    {
+      "role" : "readWriteAnyDatabase",
+      "db" : "admin"
+    },
+    {
+      "role" : "dbAdminAnyDatabase",
+      "db" : "admin"
+    },
+    {
+      "role" : "clusterAdmin",
+      "db" : "admin"
+    },
+    {
+      "role" : "clusterMonitor",
+      "db" : "admin"
+    },
+	{
+	  "role" : "read",
+      "db" : "admin"
+	}
+  ]
+	}
+);
