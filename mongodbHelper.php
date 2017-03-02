@@ -69,11 +69,12 @@ class mongodbHelper {
 	*/
 	public function updateDocToStateCollection($chat_id, $state_id)
 	{
-		$this->stateCollection->updateOne(["chat_id" => $chat_id],
-                                [ '$set' =>
-                                	["chat_id" => $chat_id,
-                                	"state_id" => $state_id]],
-                                ["upsert" => false]);
+		$this->stateCollection->updateOne(
+			["chat_id" => $chat_id],
+      [ '$set' => ["chat_id" => $chat_id,
+                   "state_id" => $state_id]
+      ],
+			["upsert" => false]);
 	}
 
 	/**
@@ -92,7 +93,10 @@ class mongodbHelper {
 	*/
 	public function updateBusinessMsgWithTypeId($chat_id, $type_id)
 	{
-		$this->businessMsgCollection->updateOne(array("chat_id" => $chat_id), array('$set' => array("type_id" => $type_id, "update_at" => new MongoDB\BSON\UTCDateTime())), array("upsert" => true));
+		$this->businessMsgCollection->updateOne(
+				array("chat_id" => $chat_id), 
+				array('$set' => array("type_id" => $type_id, "update_at" => new MongoDB\BSON\UTCDateTime())), 
+				array("upsert" => true));
 	}
 
 	/**
