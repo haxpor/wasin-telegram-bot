@@ -590,26 +590,22 @@ function processMessage($message, $mongodb) {
             // save the answer
             $mongodb->updateFreelanceworkMsgWithProposerFirstName($chat_id, $text);
 
-            // time to send e-mail including all informatio of request back to Wasin :)
-            // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
-            if (PRODUCTION)
+            // time to send e-mail including all information of request back to Wasin :)
+            // get document via chat_id
+            $doc = $mongodb->getDocInFreelanceworkMsgCollection($chat_id);
+
+            if (!empty($doc))
             {
-                // get document via chat_id
-                $doc = $mongodb->getDocInFreelanceworkMsgCollection($chat_id);
-
-                if (!empty($doc))
+                // proposer email is the most important field we need to have 
+                if (isset($doc["proposerEmail"]))
                 {
-                    // proposer email is the most important field we need to have 
-                    if (isset($doc["proposerEmail"]))
-                    {
-                        // send email
-                        $result = sendEmailOfProposedFreelancework($doc["type_id"], $doc["ideaText"], $doc["budgetTypeId"], $doc["timeTypeId"], $doc["proposerEmail"], $doc["proposerFirstName"]);
+                    // send email
+                    $result = sendEmailOfProposedFreelancework($doc["type_id"], $doc["ideaText"], $doc["budgetTypeId"], $doc["timeTypeId"], $doc["proposerEmail"], $doc["proposerFirstName"]);
 
-                        // update status if it's sent successfully
-                        if ($result)
-                        {
-                            $mongodb->updateFreelanceworkMsgWithStatus($chat_id, 1);
-                        }
+                    // update status if it's sent successfully
+                    if ($result)
+                    {
+                        $mongodb->updateFreelanceworkMsgWithStatus($chat_id, 1);
                     }
                 }
             }
@@ -760,26 +756,22 @@ function processMessage($message, $mongodb) {
             // save the answer
             $mongodb->updateBusinessMsgWithProposerFirstName($chat_id, $text);
 
-            // time to send e-mail including all informatio of request back to Wasin :)
-            // check the current config as we don't have e-mail system readily configured on development system, we only send e-mail back when it's in PRODUCTION
-            if (PRODUCTION)
+            // time to send e-mail including all information of request back to Wasin :)
+            // get document via chat_id
+            $doc = $mongodb->getDocInBusinessMsgCollection($chat_id);
+
+            if (!empty($doc))
             {
-                // get document via chat_id
-                $doc = $mongodb->getDocInBusinessMsgCollection($chat_id);
-
-                if (!empty($doc))
+                // proposer email is the most important field we need to have 
+                if (isset($doc["proposerEmail"]))
                 {
-                    // proposer email is the most important field we need to have 
-                    if (isset($doc["proposerEmail"]))
-                    {
-                        // send email
-                        $result = sendEmailOfProposedBusinessOpportunity($doc["type_id"], $doc["productDescriptionText"], $doc["offerText"], $doc["proposerEmail"], $doc["proposerFirstName"]);
+                    // send email
+                    $result = sendEmailOfProposedBusinessOpportunity($doc["type_id"], $doc["productDescriptionText"], $doc["offerText"], $doc["proposerEmail"], $doc["proposerFirstName"]);
 
-                        // update status if it's sent successfully
-                        if ($result)
-                        {
-                            $mongodb->updateBusinessMsgWithStatus($chat_id, 1);
-                        }
+                    // update status if it's sent successfully
+                    if ($result)
+                    {
+                        $mongodb->updateBusinessMsgWithStatus($chat_id, 1);
                     }
                 }
             }
@@ -975,14 +967,7 @@ function processMessage($message, $mongodb) {
 
                     {
                         // get the realpath of image file to serve to user
-                        if (PRODUCTION)
-                        {
-                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/aerothai-logo.png");
-                        }
-                        else
-                        {
-                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/aerothai-logo.png");
-                        }
+                        $realpath = realpath("./resources/aerothai-logo.png");
 
                         $parameters = array("chat_id" => $chat_id,
                                     "photo" => new CURLFile($realpath),
@@ -998,14 +983,7 @@ function processMessage($message, $mongodb) {
 
                     {
                         // get the realpath of image file to serve to user
-                        if (PRODUCTION)
-                        {
-                            $realpath = realpath("/var/www/wasin.io/projs/wasin-telegram-bot/resources/playbasis-logo.png");
-                        }
-                        else
-                        {
-                            $realpath = realpath("/Users/haxpor/Sites/wasinbot-res/playbasis-logo.png");
-                        }
+                        $realpath = realpath("./resources/playbasis-logo.png");
 
                         $parameters = array("chat_id" => $chat_id,
                                     "photo" => new CURLFile($realpath),
