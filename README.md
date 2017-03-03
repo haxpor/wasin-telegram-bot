@@ -28,10 +28,13 @@ Define it like this
 <Directory "/Users/haxpor/Sites/">
     Options Indexes MultiViews FollowSymLinks
     SetEnv WASIN_TELEGRAM_BOT_TOKEN <your-bot-token-here>
-    SetEnv WASIN_TELEGRAM_BOT_WEBHOOK_URL <your-webhook-url-before-api-dot-php-here>/api.php
     SetEnv WASIN_TELEGRAM_BOT_PROXY 127.0.0.1:1087
 </Directory>
 ```
+
+# Delete Webhook URL
+
+You can delete webhook URL you've set with `php setWebhook.php delete`.
 
 # License
 
