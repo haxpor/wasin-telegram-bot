@@ -16,7 +16,8 @@ class mongodbHelper {
 	*/
 	public function __construct()
 	{
-		$this->m = new MongoDB\Client("mongodb://localhost:27017");
+		// read in mongodb's username and password from environment variables
+		$this->m = new MongoDB\Client("mongodb://" . getenv('WASIN_TELEGRAM_BOT_MONGODB_USER') . ":" . getenv('WASIN_TELEGRAM_BOT_MONGODB_PASS') . "@localhost:27017/admin");
 		$this->db = $this->m->wasinbot;
 		$this->stateCollection = $this->db->state;
 		$this->businessMsgCollection = $this->db->businessMsg;
