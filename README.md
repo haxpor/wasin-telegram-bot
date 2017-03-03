@@ -3,9 +3,11 @@ WasinBot, a bot interacting with Wasin on Telegram in friendly or for business p
 
 # How to
 1. First you need to create a new telegram bot on Telegram by chatting with BotFather (@BotFather) on Telegram. It will lead you through all the steps of inputing bot name, info, and most importantly getting **bot token**.
-2. Set bot token, and webhook url via environment variables as follows.
+2. Set bot token, webhook url, mongodb's username and password via environment variables as follows.
    * bot token - `export WASIN_TELEGRAM_BOT_TOKEN=...` replace `...` with bot token you got from step 1.
    * webhook url - `export WASIN_TELEGRAM_BOT_WEBHOOK_URL=https://.../api.php` replace `...` with your URL leading to serving file `api.php`.
+   * mongodb username - `export WASIN_TELEGRAM_BOT_MONGODB_USER=...` by replacing `...` with your username.
+   * mongodb password - `export WASIN_TELEGRAM_BOT_MONGODB_PASS=...` by replacing `...` with your password.
 3. Set webhook by executing `php setWebhook.php`. You should receive success message.
 4. Done. Feel free to interact with the bot on telegram.
 
@@ -28,10 +30,15 @@ Define it like this
 <Directory "/Users/haxpor/Sites/">
     Options Indexes MultiViews FollowSymLinks
     SetEnv WASIN_TELEGRAM_BOT_TOKEN <your-bot-token-here>
-    SetEnv WASIN_TELEGRAM_BOT_WEBHOOK_URL <your-webhook-url-before-api-dot-php-here>/api.php
     SetEnv WASIN_TELEGRAM_BOT_PROXY 127.0.0.1:1087
+    SetEnv WASIN_TELEGRAM_BOT_MONGODB_USER <your-mongodb-username>
+    SetEnv WASIN_TELEGRAM_BOT_MONGODB_PASS <your-mongodb-password>
 </Directory>
 ```
+
+# Delete Webhook URL
+
+You can delete webhook URL you've set with `php setWebhook.php delete`.
 
 # License
 
